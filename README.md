@@ -16,14 +16,14 @@ Vue.use(VueTweening)
 
 ## Usage 
 
-In a vue component, either way is OK (`from-to-within-via-rounded` is equivalent to `start-end-duration-easing-integer`):
+Call this.$tweening in a vue component (`from-to-within-via-rounded` is equivalent to `start-end-duration-easing-integer`):
 
 ```javascript
 
-data: function() {
+data() {
   return {
     test1: 0，
-    test2: {a: 1; b: 2}，
+    test2: {a: 1, b: 2}，
     test3: 0，
     test4: {a: 1, b: 2}
   } 
@@ -77,6 +77,6 @@ InSomeMethodsOrHooks() {
 
 ## Injected Globals
 
-`this.$tweening.Easing` is equivalent to `TWEEN.Easing`;
+`this.$tweening.Easing`: equivalent to `TWEEN.Easing`;
 
-`this.$tweening.toInteger()` can be used if you don't set `integer: true` or `rouned: true` but still want integers. 
+`this.$tweening.toInteger()`: if you don't set `integer: true` or `rouned: true` but still want integers. 
