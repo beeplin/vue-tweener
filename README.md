@@ -16,7 +16,7 @@ Vue.use(VueTweening)
 
 ## Usage 
 
-Call this.$tweening in a vue component (`from-to-within-via-rounded` is equivalent to `start-end-duration-easing-integer`):
+Call `this.$tweening` in a vue component (`from-to-within-via-rounded` is equivalent to `start-end-duration-easing-integer`):
 
 ```javascript
 
