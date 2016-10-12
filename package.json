@@ -1,0 +1,23 @@
+{
+  "name": "vue-tweening",
+  "version": "0.0.1",
+  "description": "Tweening vue's reactive data over time.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beeplin/vue-tweening.git"
+  },
+  "keywords": [
+    "vue",
+    "tween"
+  ],
+  "author": "beeplin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/beeplin/vue-tweening/issues"
+  },
+  "homepage": "https://github.com/beeplin/vue-tweening#readme"
+}
