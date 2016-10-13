@@ -53,8 +53,58 @@ export default {
       return animate();
     };
     Vue.prototype.$tweening.Easing = TWEEN.Easing;
-    return Vue.prototype.$tweening.toInteger = function(v) {
+    Vue.prototype.$tweening.toInteger = function(v) {
       return (Number(v != null ? v.toFixed(0) : void 0)) || 0;
     };
+    return Vue.mixin({
+      created: function() {
+        var name, options, results, tween;
+        tween = this.$options.tween;
+        if (tween != null) {
+          results = [];
+          for (name in tween) {
+            options = tween[name];
+            results.push((function(_this) {
+              return function(name, options) {
+                var watch;
+                if (typeof options === 'function') {
+                  options = options.call(_this);
+                }
+                if (typeof options === 'string') {
+                  watch = options;
+                  options = {
+                    watch: watch
+                  };
+                }
+                if (options.duration == null) {
+                  options.duration = 1500;
+                }
+                if (options.integer == null) {
+                  options.integer = true;
+                }
+                if (options.easing == null) {
+                  options.easing = TWEEN.Easing.Quadratic.Out;
+                }
+                Vue.util.defineReactive(_this, name, true);
+                return _this.$watch(options.watch, function(newVal, oldVal) {
+                  return _this.$tweening({
+                    tween: name,
+                    start: oldVal,
+                    end: newVal,
+                    duration: options.duration,
+                    easing: options.easing,
+                    integer: options.integer
+                  });
+                }, {
+                  deep: true,
+                  immediate: true
+                });
+              };
+            })(this)(name, options));
+          }
+          return results;
+        }
+      }
+    });
   }
 };
