@@ -14,7 +14,7 @@ import VueTweening from 'vue-tweening'
 Vue.use(VueTweening)
 ```
 
-## Usage 
+## Usage
 
 Call `this.$tweening` in a vue component (`from-to-within-via-rounded` is equivalent to `start-end-duration-easing-integer`):
 
@@ -22,12 +22,25 @@ Call `this.$tweening` in a vue component (`from-to-within-via-rounded` is equiva
 
 data() {
   return {
+    source: 1
     test1: 0，
     test2: {a: 1, b: 2}，
     test3: 0，
     test4: {a: 1, b: 2}
-  } 
+  }
 
+// option syntax:
+tween: {
+  tweened() { // when this.source changes, refer to this.tweened to get the tweened source
+    return {
+      watch: 'source',
+      duration: 1000, // 1500 by default
+      easing: this.$tweening.Easing.Quadratic.InOut // this.$tweening.Easing.Quadratic.Out by default
+    }
+  }
+}
+
+// method syntax:
 InSomeMethodsOrHooks() {
 
   // tweening one number with string syntax
@@ -72,11 +85,11 @@ InSomeMethodsOrHooks() {
     easing: this.$tweening.Easing.Quadratic.InOut,
     integer: false
   });
-}  
+}
 ```
 
 ## Injected Globals
 
 `this.$tweening.Easing`: equivalent to `TWEEN.Easing`;
 
-`this.$tweening.toInteger()`: if you don't set `integer: true` or `rouned: true` but still want integers. 
+`this.$tweening.toInteger()`: if you don't set `integer: true` or `rouned: true` but still want integers.
