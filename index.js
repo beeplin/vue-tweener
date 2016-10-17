@@ -1,24 +1,26 @@
-import TWEEN from 'tween.js'
+var m;
+
+import TWEEN from 'tween.js';
 
 export default {
   install: function(Vue) {
-    Vue.prototype.$tweening = function(arg) {
-      var animate, duration, easing, end, from, integer, isCallback, isNumber, rounded, start, to, tween, via, vm, within;
-      tween = arg.tween, start = arg.start, end = arg.end, duration = arg.duration, easing = arg.easing, integer = arg.integer, from = arg.from, to = arg.to, within = arg.within, via = arg.via, rounded = arg.rounded;
+    Vue.prototype.$tween = function(arg) {
+      var animate, duration, easing, end, isCallback, isNumber, output, rounded, start, vm;
+      output = arg.output, start = arg.start, end = arg.end, duration = arg.duration, easing = arg.easing, rounded = arg.rounded;
       if (start == null) {
-        start = from != null ? from : 0;
+        start = 0;
       }
       if (end == null) {
-        end = to != null ? to : 100;
+        end = 100;
       }
       if (duration == null) {
-        duration = within != null ? within : 2000;
-      }
-      if (integer == null) {
-        integer = rounded != null ? rounded : true;
+        duration = 2000;
       }
       if (easing == null) {
-        easing = via != null ? via : TWEEN.Easing.Quadratic.Out;
+        easing = TWEEN.Easing.Quadratic.Out;
+      }
+      if (rounded == null) {
+        rounded = true;
       }
       isNumber = typeof start === 'number';
       if (isNumber) {
@@ -29,7 +31,7 @@ export default {
           key: end
         };
       }
-      isCallback = typeof tween === 'function';
+      isCallback = typeof output === 'function';
       vm = this;
       animate = function(time) {
         requestAnimationFrame(animate);
@@ -38,22 +40,22 @@ export default {
       new TWEEN.Tween(start).easing(easing).to(end, duration).onUpdate(function() {
         if (isCallback) {
           if (isNumber) {
-            return tween(integer ? Number(this.key.toFixed(0)) : this.key);
+            return output(rounded ? Number(this.key.toFixed(0)) : this.key);
           } else {
-            return tween(this);
+            return output(this);
           }
         } else {
           if (isNumber) {
-            return vm[tween] = integer ? Number(this.key.toFixed(0)) : this.key;
+            return vm[output] = rounded ? Number(this.key.toFixed(0)) : this.key;
           } else {
-            return vm[tween] = this;
+            return vm[output] = this;
           }
         }
       }).start();
       return animate();
     };
-    Vue.prototype.$tweening.Easing = TWEEN.Easing;
-    Vue.prototype.$tweening.toInteger = function(v) {
+    Vue.prototype.$tween.Easing = TWEEN.Easing;
+    Vue.prototype.$tween.toInteger = function(v) {
       return (Number(v != null ? v.toFixed(0) : void 0)) || 0;
     };
     return Vue.mixin({
@@ -61,6 +63,7 @@ export default {
         var name, options, results, tween;
         tween = this.$options.tween;
         if (tween != null) {
+          this._unwatchers = {};
           results = [];
           for (name in tween) {
             options = tween[name];
@@ -79,21 +82,22 @@ export default {
                 if (options.duration == null) {
                   options.duration = 1500;
                 }
-                if (options.integer == null) {
-                  options.integer = true;
+                if (options.rounded == null) {
+                  options.rounded = true;
                 }
                 if (options.easing == null) {
                   options.easing = TWEEN.Easing.Quadratic.Out;
                 }
                 Vue.util.defineReactive(_this, name, true);
-                return _this.$watch(options.watch, function(newVal, oldVal) {
-                  return _this.$tweening({
-                    tween: name,
+                _this.$data[name] = _this[name];
+                return _this._unwatchers[name] = _this.$watch(options.watch, function(newVal, oldVal) {
+                  return _this.$tween({
+                    output: name,
                     start: oldVal,
                     end: newVal,
                     duration: options.duration,
                     easing: options.easing,
-                    integer: options.integer
+                    rounded: options.rounded
                   });
                 }, {
                   deep: true,
@@ -103,6 +107,14 @@ export default {
             })(this)(name, options));
           }
           return results;
+        }
+      },
+      beforeDestroy: function() {
+        var name, ref, unwatcher;
+        ref = this._unwatchers;
+        for (name in ref) {
+          unwatcher = ref[name];
+          unwatcher();
         }
       }
     });

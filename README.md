@@ -1,25 +1,25 @@
-# vue-tweening
-Tweening vue's reactive data over time. A vue wrapper for [tween.js](https://github.com/tweenjs/tween.js)
+# vue-tweener
 
-## Install:
+tween Vue's reactive data over time. A Vue wrapper for [tween.js](https://github.com/tweenjs/tween.js).
 
+## Install
+
+```bash
+npm i -g vue-tweener
 ```
-npm i -g vue-tweening
-```
 
-## Plugin into Vue:
+## Plugin into Vue
 
-```javascript
-import VueTweening from 'vue-tweening'
-Vue.use(VueTweening)
+```js
+import Vue from 'vue'
+import VueTweener from 'vue-tweener'
+
+Vue.use(VueTweener)
 ```
 
 ## Usage
 
-Call `this.$tweening` in a vue component (`from-to-within-via-rounded` is equivalent to `start-end-duration-easing-integer`):
-
-```javascript
-
+```js
 data() {
   return {
     source: 1
@@ -29,67 +29,68 @@ data() {
     test4: {a: 1, b: 2}
   }
 
-// option syntax:
+// Declarative syntax:
 tween: {
   tweened() { // when this.source changes, refer to this.tweened to get the tweened source
     return {
-      watch: 'source',
+      watch: 'source', // NOTE: can only watch expression returning single number, not object or others.
       duration: 1000, // 1500 by default
-      easing: this.$tweening.Easing.Quadratic.InOut // this.$tweening.Easing.Quadratic.Out by default
+      easing: this.$tween.Easing.Quadratic.InOut, // this.$tween.Easing.Quadratic.Out by default
+      rounded: no // yes by default, rounded to integer
     }
   }
 }
 
-// method syntax:
+// Imperative syntax:
 InSomeMethodsOrHooks() {
 
-  // tweening one number with string syntax
-  this.$tweening({
-    tween: 'test1',
-    from: 1,
-    to: 100,
-    within: 2000,
-    via: this.$tweening.Easing.Quadratic.Out,
-    rounded: true
+  // tween one number to a string output, which is the name of the tweened outcome
+  this.$tween({
+    start: 1,
+    end: 100,
+    duration: 2000,
+    easing: this.$tween.Easing.Quadratic.Out,
+    rounded: true,
+    output: 'test1' //this.test1 as the tweened outcome. test1 must be in data list.
   });
 
-  // tweening multiple numbers in an object at the same time, with string syntax
-  this.$tweening({
-    tween: 'test2',
+  // tween multiple numbers in an object at the same time
+  this.$tween({
     start: {a: 0.1, b: 0.2},
     end: {a: 1, b: -1},
     duration: 1000,
-    easing: this.$tweening.Easing.Quadratic.InOut,
-    integer: false
+    easing: this.$tween.Easing.Quadratic.InOut,
+    rounded: false,
+    output: 'test2' //this.test2 as the tweened outcome. test2 must be in data list.
   });
 
-  // tweening one number with callback syntax for post-processing
-  this.$tweening({
-    tween(value) => this.test3 = value * 2,
-    from: 1,
-    to: 100,
-    within: 5000,
-    via: this.$tweening.Easing.Quadratic.Out,
-    rounded: false
+  // tween one number with callback syntax for post-processing
+  this.$tween({
+    start: 1,
+    end: 100,
+    duration: 5000,
+    easing: this.$tween.Easing.Quadratic.Out,
+    rounded: false,
+    output(value) => this.test3 = value * 2 // test3 must be in data list.
   });
 
-  // tweening multiple numbers in an object at the same time, with callback syntax for post-processing
-  this.$tweening({
-    tween(value) => {
-      this.test4.a = this.$tweening.toInteger(value.a)
-      this.test4.b = Number(value.b.toFixed(0))
-    },
+  // tween multiple numbers in an object at the same time, with callback syntax for post-processing
+  this.$tween({
     start: {a: 1, b: 2},
     end: {a: 10, b: -20},
     duration: 2000,
-    easing: this.$tweening.Easing.Quadratic.InOut,
-    integer: false
+    easing: this.$tween.Easing.Quadratic.InOut,
+    rounded: false,
+    output(value) => {
+      this.test4.a = this.$tween.toInteger(value.a)
+      this.test4.b = Number(value.b.toFixed(0)) // test4 must be in data list.
+    }
   });
 }
 ```
 
 ## Injected Globals
 
-`this.$tweening.Easing`: equivalent to `TWEEN.Easing`;
+`this.$tween.Easing`: equivalent to `TWEEN.Easing`;
 
-`this.$tweening.toInteger()`: if you don't set `integer: true` or `rouned: true` but still want integers.
+`this.$tween.toInteger()`: use this when you don't set `rouned: true` but still want integers.

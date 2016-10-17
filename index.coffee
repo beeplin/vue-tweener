@@ -1,33 +1,28 @@
 import TWEEN from 'tween.js'
 
-export default v =
+export default m =
   install: (Vue) ->
-    Vue::$tweening = ({
-      tween
+    Vue::$tween = ({
+      output
       start
       end
       duration
       easing
-      integer
-      from
-      to
-      within
-      via
       rounded
     }) ->
 
-      start ?= from ? 0
-      end ?= to ? 100
-      duration ?= within ? 2000
-      integer ?= rounded ? yes
-      easing ?= via ? TWEEN.Easing.Quadratic.Out
+      start ?= 0
+      end ?= 100
+      duration ?= 2000
+      easing ?= TWEEN.Easing.Quadratic.Out
+      rounded ?= yes
 
       isNumber = typeof start is 'number'
       if isNumber
         start = key: start
         end = key: end
 
-      isCallback = typeof tween is 'function'
+      isCallback = typeof output is 'function'
       vm = @
 
       animate = (time) ->
@@ -38,28 +33,27 @@ export default v =
       .easing easing
       .to end, duration
       .onUpdate ->
-        # console.log this.a
         if isCallback
           if isNumber
-            tween if integer then Number @key.toFixed 0 else @key
+            output if rounded then Number @key.toFixed 0 else @key
           else
-            tween @
+            output @
         else
           if isNumber
-            vm[tween] = if integer then Number @key.toFixed 0 else @key
+            vm[output] = if rounded then Number @key.toFixed 0 else @key
           else
-            vm[tween] = @
-
+            vm[output] = @
       .start()
       animate()
 
-    Vue::$tweening.Easing = TWEEN.Easing
-    Vue::$tweening.toInteger = (v) -> (Number v?.toFixed 0) or 0
+    Vue::$tween.Easing = TWEEN.Easing
+    Vue::$tween.toInteger = (v) -> (Number v?.toFixed 0) or 0
 
     Vue.mixin
       created: ->
         tween = @$options.tween
         if tween?
+          @_unwatchers = {}
           for name, options of tween
             do (name, options) =>
               if typeof options is 'function'
@@ -68,17 +62,23 @@ export default v =
                 watch = options
                 options = {watch}
               options.duration ?= 1500
-              options.integer ?= yes
+              options.rounded ?= yes
               options.easing ?= TWEEN.Easing.Quadratic.Out
               Vue.util.defineReactive @, name, true
-              @$watch options.watch, (newVal, oldVal) =>
-                @$tweening
-                  tween: name
+              @$data[name] = @[name]
+              @_unwatchers[name] = @$watch options.watch, (newVal, oldVal) =>
+                @$tween
+                  output: name
                   start: oldVal
                   end: newVal
                   duration: options.duration
                   easing: options.easing
-                  integer: options.integer
+                  rounded: options.rounded
               ,
                 deep: yes
-                immediate: no
+                immediate: yes
+
+      beforeDestroy: ->
+        for name, unwatcher of @_unwatchers
+          unwatcher()
+        return
