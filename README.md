@@ -1,6 +1,6 @@
 # vue-tweener
 
-tween Vue's reactive data over time. A Vue wrapper for [tween.js](https://github.com/tweenjs/tween.js).
+Tween Vue's reactive data over time. A Vue wrapper for [tween.js](https://github.com/tweenjs/tween.js).
 
 ## Install
 
@@ -22,12 +22,13 @@ Vue.use(VueTweener)
 ```js
 data() {
   return {
-    source: 1
-    test1: 0，
-    test2: {a: 1, b: 2}，
-    test3: 0，
+    source: 1,
+    test1: 0,
+    test2: {a: 1, b: 2},
+    test3: 0,
     test4: {a: 1, b: 2}
   }
+}
 
 // Declarative syntax:
 tween: {
@@ -36,7 +37,7 @@ tween: {
       watch: 'source', // NOTE: can only watch expression returning single number, not object or others.
       duration: 1000, // 1500 by default
       easing: this.$tween.Easing.Quadratic.InOut, // this.$tween.Easing.Quadratic.Out by default
-      rounded: no // yes by default, rounded to integer
+      rounded: false // true by default, rounded to integer
     }
   }
 }
@@ -51,7 +52,7 @@ InSomeMethodsOrHooks() {
     duration: 2000,
     easing: this.$tween.Easing.Quadratic.Out,
     rounded: true,
-    output: 'test1' //this.test1 as the tweened outcome. test1 must be in data list.
+    output: 'test1' //this.test1 as the tweened outcome. test1 must be in the data list.
   });
 
   // tween multiple numbers in an object at the same time
@@ -61,7 +62,7 @@ InSomeMethodsOrHooks() {
     duration: 1000,
     easing: this.$tween.Easing.Quadratic.InOut,
     rounded: false,
-    output: 'test2' //this.test2 as the tweened outcome. test2 must be in data list.
+    output: 'test2' //this.test2 as the tweened outcome. test2 must be in the data list.
   });
 
   // tween one number with callback syntax for post-processing
@@ -71,7 +72,7 @@ InSomeMethodsOrHooks() {
     duration: 5000,
     easing: this.$tween.Easing.Quadratic.Out,
     rounded: false,
-    output(value) => this.test3 = value * 2 // test3 must be in data list.
+    output: (value) => this.test3 = value * 2 // test3 must be in the data list.
   });
 
   // tween multiple numbers in an object at the same time, with callback syntax for post-processing
@@ -81,9 +82,9 @@ InSomeMethodsOrHooks() {
     duration: 2000,
     easing: this.$tween.Easing.Quadratic.InOut,
     rounded: false,
-    output(value) => {
+    output: (value) => {
       this.test4.a = this.$tween.toInteger(value.a)
-      this.test4.b = Number(value.b.toFixed(0)) // test4 must be in data list.
+      this.test4.b = Number(value.b.toFixed(0)) // test4 must be in the data list.
     }
   });
 }
