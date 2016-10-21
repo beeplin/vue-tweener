@@ -1,6 +1,6 @@
 {
 	"name": "vue-tweener",
-	"version": "0.0.4",
+	"version": "0.1.0",
 	"description": "Tween vue's reactive data over time.",
 	"main": "index.js",
 	"scripts": {
@@ -19,5 +19,8 @@
 	"bugs": {
 		"url": "https://github.com/beeplin/vue-tweener/issues"
 	},
-	"homepage": "https://github.com/beeplin/vue-tweener#readme"
+	"homepage": "https://github.com/beeplin/vue-tweener#readme",
+	"dependencies": {
+		"tween.js": "^16.3.5"
+	}
 }
