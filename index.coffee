@@ -1,7 +1,6 @@
 import TWEEN from 'tween.js'
-
-export default m =
-  install: (Vue) ->
+( ->
+  plugin = (Vue) ->
     Vue::$tween = ({
       output
       start
@@ -82,3 +81,13 @@ export default m =
         for name, unwatcher of @_unwatchers
           unwatcher()
         return
+
+  if Vue? then Vue.use plugin
+  if typeof exports is 'object' and typeof module is 'object'
+    module.exports = plugin
+  else if typeof define is 'function' and define.amd
+    define -> plugin
+  else if window?
+    window.VueTweener = plugin
+
+)()
